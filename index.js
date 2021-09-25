@@ -13,13 +13,17 @@ client.once("ready", () => {
 
   setInterval(async () => {
     try {
-      const response = await axios.get(
-        "https://api.pancakeswap.info/api/v2/tokens/0x31471e0791fcdbe82fbf4c44943255e923f1b794"
-      );
+      const response = (
+        await axios.get(
+          "https://api.coingecko.com/api/v3/simple/token_price/binance-smart-chain?contract_addresses=0x31471e0791fcdbe82fbf4c44943255e923f1b794&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true"
+        )
+      ).data["0x31471e0791fcdbe82fbf4c44943255e923f1b794"];
 
-      const cleanData = Number(response.data.data.price).toFixed(4);
+      const usd = response.usd;
+      const percentage = response.usd_24h_change;
+      const upordown = percentage < 0 ? "📉" : "📈";
 
-      client.user.setActivity(`$${cleanData}`);
+      client.user.setActivity(`$${usd} ${upordown} ${percentage.toFixed(2)}%`);
     } catch (err) {
       console.log(err.message);
     }
